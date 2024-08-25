@@ -1,0 +1,25 @@
+Db Name : HOSPITAL_MANAGMENT_SYSTEM
+
+config.env file :
+
+
+PORT=4000
+
+MONGO_URI=mongodb+srv://kashif955:malik955599@cluster0.mkw5k.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+
+FRONTEND_URL = http://localhost:5173
+
+DASHBOARD_URL = http://localhost:5174
+
+JWT_SECRET_KEY = kdfhdghjdfkdfhjdfd;
+
+JWT_EXPIRES = 7d
+
+COOKIE_EXPIRE = 7
+
+CLOUDINARY_CLOUD_NAME = dwd2cvqnd
+
+CLOUDINARY_API_SECRET =TKbdCboBvaRvFnUf9IhSgQryAnE
+
+CLOUDINARY_API_KEY = 537769591123331
+

@@ -1,0 +1,9 @@
+msgs 
+
+"Hello, I'm here to register as a new patient. Can you guide me through the process?"
+"I need to schedule an appointment. What are the available slots?"
+"Can I check my medical records online? How do I access them?"
+"I would like to update my contact information. How can I do that?"
+"I'm having trouble logging into my account. Can you help me reset my password?"
+
+

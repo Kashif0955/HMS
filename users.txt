@@ -1,0 +1,9 @@
+admins:
+admin1@gmail.com --> admin12345
+kashif1@gmail.com --> kashif12345
+
+
+
+users:
+kashif@gmial.com --> kashif123
+soban@gmail.com  --> soban123

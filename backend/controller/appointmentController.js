@@ -2,6 +2,7 @@ import { catchAsyncErrors } from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../middlewares/error.js";
 import { Appointment } from "../models/appointmentSchema.js";
 import { User } from "../models/userSchema.js";
+import nodemailer from "nodemailer"; // Import nodemailer for sending emails
 
 export const postAppointment = catchAsyncErrors(async (req, res, next) => {
   const {
@@ -80,7 +81,26 @@ export const postAppointment = catchAsyncErrors(async (req, res, next) => {
     message: "Appointment Send!",
   });
 });
+export const getDoctorAppointments = async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return res.status(403).json({ message: 'Doctor not authenticated.' });
+    }
 
+    console.log('Doctor ID:', req.user._id);  // Ensure this matches the ID in your query
+
+    const appointments = await Appointment.find({ doctorId: req.user._id });
+
+    if (!appointments || appointments.length === 0) {
+      return res.status(404).json({ message: 'No appointments found.' });
+    }
+
+    res.status(200).json({ appointments });
+  } catch (error) {
+    console.error('Error fetching appointments:', error);
+    res.status(400).json({ message: 'Failed to fetch appointments. Please try again.' });
+  }
+};
 export const getAllAppointments = catchAsyncErrors(async (req, res, next) => {
   const appointments = await Appointment.find();
   res.status(200).json({

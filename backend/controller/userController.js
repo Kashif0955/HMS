@@ -193,6 +193,26 @@ export const getUserDetails = catchAsyncErrors(async (req, res, next) => {
     user,
   });
 });
+export const doctorLogin = catchAsyncErrors(async (req, res, next) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return next(new ErrorHandler("Please Fill All Fields!", 400));
+  }
+
+  const doctor = await User.findOne({ email, role: "Doctor" }).select("+password");
+  if (!doctor) {
+    return next(new ErrorHandler("Invalid Email Or Password!", 400));
+  }
+
+  const isPasswordMatch = await doctor.comparePassword(password);
+  if (!isPasswordMatch) {
+    return next(new ErrorHandler("Invalid Email Or Password!", 400));
+  }
+
+  generateToken(doctor, "Login Successfully!", 200, res);
+});
+
 
 // Logout function for dashboard admin
 export const logoutAdmin = catchAsyncErrors(async (req, res, next) => {

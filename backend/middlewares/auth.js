@@ -3,6 +3,21 @@ import { catchAsyncErrors } from "./catchAsyncErrors.js";
 import ErrorHandler from "./error.js";
 import jwt from "jsonwebtoken";
 
+// Middleware to authenticate users
+export const auth = (req, res, next) => {
+  const token = req.header('Authorization')?.split(' ')[1]; // Extract token from Bearer
+
+  if (!token) return res.status(401).json({ message: 'No token, authorization denied' });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    req.user = decoded; // Store user info in req
+    next();
+  } catch (error) {
+    res.status(401).json({ message: 'Token is not valid' });
+  }
+};
+
 // Middleware to authenticate dashboard users
 export const isAdminAuthenticated = catchAsyncErrors(
   async (req, res, next) => {
@@ -45,6 +60,24 @@ export const isPatientAuthenticated = catchAsyncErrors(
     next();
   }
 );
+export const isDoctorAuthenticated = async (req, res, next) => {
+  try {
+    const token = req.cookies.doctorToken || req.header('Authorization')?.split(' ')[1]; // Check cookie or header
+
+    if (!token) return res.status(401).json({ message: 'No token provided' });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const user = await User.findById(decoded.id);
+
+    if (!user || user.role !== 'Doctor') return res.status(403).json({ message: 'Access denied' });
+
+    req.user = user; // Store user info in req
+    next();
+  } catch (error) {
+    res.status(401).json({ message: 'Unauthorized', error });
+  }
+};
+
 
 export const isAuthorized = (...roles) => {
   return (req, res, next) => {

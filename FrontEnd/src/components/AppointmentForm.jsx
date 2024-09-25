@@ -15,7 +15,7 @@ const AppointmentForm = () => {
   const [selectedDoctor, setSelectedDoctor] = useState("");
   const [address, setAddress] = useState("");
   const [hasVisited, setHasVisited] = useState(false);
-
+  
   const departmentsArray = [
     "Pediatrics",
     "Orthopedics",
@@ -32,24 +32,36 @@ const AppointmentForm = () => {
   
   useEffect(() => {
     const fetchDoctors = async () => {
-      const { data } = await axios.get(
-        "http://localhost:4000/api/v1/user/doctors",
-        { withCredentials: true }
-      );
-      setDoctors(data.doctors);
-      console.log(data.doctors);
+      try {
+        const { data } = await axios.get("http://localhost:4000/api/v1/user/doctors", { withCredentials: true });
+        setDoctors(data.doctors);
+      } catch (error) {
+        toast.error("Failed to load doctors. Please try again.");
+      }
     };
     fetchDoctors();
   }, []);
 
   const handleAppointment = async (e) => {
     e.preventDefault();
+
+    // Validate required fields
+    if (!firstName || !lastName || !email || !phone || !nic || !dob || !gender || !appointmentDate || !selectedDoctor) {
+      toast.error("Please fill all required fields.");
+      return;
+    }
+
     try {
       const hasVisitedBool = Boolean(hasVisited);
       const selectedDoctorData = doctors.find(
-        (doctor) =>
-          `${doctor.firstName} ${doctor.lastName}` === selectedDoctor
+        (doctor) => `${doctor.firstName} ${doctor.lastName}` === selectedDoctor
       );
+
+      // Check if a doctor is selected
+      if (!selectedDoctorData) {
+        toast.error("Please select a valid doctor.");
+        return;
+      }
 
       const { data } = await axios.post(
         "http://localhost:4000/api/v1/appointment/post",
@@ -63,8 +75,8 @@ const AppointmentForm = () => {
           gender,
           appointment_date: appointmentDate,
           department,
-          doctor_firstName: selectedDoctorData?.firstName,
-          doctor_lastName: selectedDoctorData?.lastName,
+          doctor_firstName: selectedDoctorData.firstName,
+          doctor_lastName: selectedDoctorData.lastName,
           hasVisited: hasVisitedBool,
           address,
         },
@@ -74,22 +86,29 @@ const AppointmentForm = () => {
         }
       );
       toast.success(data.message);
+      
       // Reset form fields
-      setFirstName("");
-      setLastName("");
-      setEmail("");
-      setPhone("");
-      setNic("");
-      setDob("");
-      setGender("");
-      setAppointmentDate("");
-      setDepartment("Pediatrics");
-      setSelectedDoctor("");
-      setHasVisited(false);
-      setAddress("");
+      resetForm();
     } catch (error) {
-      toast.error(error.response.data.message);
+      // Handle API error
+      const errorMessage = error.response?.data?.message || "An error occurred. Please try again.";
+      toast.error(errorMessage);
     }
+  };
+
+  const resetForm = () => {
+    setFirstName("");
+    setLastName("");
+    setEmail("");
+    setPhone("");
+    setNic("");
+    setDob("");
+    setGender("");
+    setAppointmentDate("");
+    setDepartment("Pediatrics");
+    setSelectedDoctor("");
+    setHasVisited(false);
+    setAddress("");
   };
 
   return (
@@ -113,13 +132,13 @@ const AppointmentForm = () => {
         </div>
         <div>
           <input
-            type="text"
+            type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <input
-            type="number"
+            type="tel"
             placeholder="Mobile Number"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
@@ -175,10 +194,7 @@ const AppointmentForm = () => {
             {doctors
               .filter((doctor) => doctor.doctorDepartment === department)
               .map((doctor, index) => (
-                <option
-                  value={`${doctor.firstName} ${doctor.lastName}`}
-                  key={index}
-                >
+                <option value={`${doctor.firstName} ${doctor.lastName}`} key={index}>
                   {doctor.firstName} {doctor.lastName}
                 </option>
               ))}
@@ -190,13 +206,7 @@ const AppointmentForm = () => {
           onChange={(e) => setAddress(e.target.value)}
           placeholder="Address"
         />
-        <div
-          style={{
-            gap: "10px",
-            justifyContent: "flex-end",
-            flexDirection: "row",
-          }}
-        >
+        <div style={{ gap: "10px", justifyContent: "flex-end", flexDirection: "row" }}>
           <p style={{ marginBottom: 0 }}>Have you visited before?</p>
           <input
             type="checkbox"

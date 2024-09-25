@@ -12,6 +12,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Context } from './main';
 import axios from 'axios';
 import Footer from './components/Footer';
+import DoctorLogin from './pages/DoctorLogin';
+import DoctorDashboard from './pages/DoctorDashboard';
 
 const App = () => {
   const { isAuthenticated, setIsAuthenticated, setUser } = useContext(Context)
@@ -44,6 +46,8 @@ const App = () => {
         <Route path="/about" element={<AboutUs />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/doctorLogin" element={<DoctorLogin />} />
+        <Route path="/doctorDashboard" element={<DoctorDashboard />} />
       </Routes>
       <Footer/>
       <ToastContainer position='top-center' />

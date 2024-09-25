@@ -8,7 +8,7 @@ import { Context } from "../main";
 const Navbar = () => {
   const [show, setShow] = useState(false);
   const { isAuthenticated, setIsAuthenticated } = useContext(Context);
-
+  
   const handleLogout = async () => {
     await axios
       .get("http://localhost:4000/api/v1/user/patient/logout", {
@@ -29,6 +29,11 @@ const Navbar = () => {
     navigateTo("/login");
   };
 
+  
+  const goToDoctorLogin = () => {
+    navigateTo("/doctorLogin");
+  };
+
   return (
     <>
       <nav className={"container navbar"}>
@@ -47,6 +52,9 @@ const Navbar = () => {
             <Link to={"/about"} onClick={() => setShow(!show)}>
               About Us
             </Link>
+            <Link to="/doctorLogin" onClick={() => setShow(false)}>
+            Doctor Login
+          </Link>
           </div>
           {isAuthenticated ? (
             <button className="logoutBtn btn" onClick={handleLogout}>

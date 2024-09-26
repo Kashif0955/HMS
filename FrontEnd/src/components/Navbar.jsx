@@ -29,7 +29,6 @@ const Navbar = () => {
     navigateTo("/login");
   };
 
-  
   const goToDoctorLogin = () => {
     navigateTo("/doctorLogin");
   };
@@ -39,7 +38,6 @@ const Navbar = () => {
       <nav className={"container navbar"}>
         <div className="logo">
           <img src="/logo.png" alt="logo" className="logo-img" />
-          {/* <h3>KashifCare</h3> */}
         </div>
         <div className={show ? "navLinks showmenu" : "navLinks"}>
           <div className="links">
@@ -52,9 +50,12 @@ const Navbar = () => {
             <Link to={"/about"} onClick={() => setShow(!show)}>
               About Us
             </Link>
-            <Link to="/doctorLogin" onClick={() => setShow(false)}>
-            Doctor Login
-          </Link>
+            {/* Conditional rendering for Doctor Login */}
+            {!isAuthenticated && (
+              <Link to="/doctorLogin" onClick={() => setShow(false)}>
+                Doctor Login
+              </Link>
+            )}
           </div>
           {isAuthenticated ? (
             <button className="logoutBtn btn" onClick={handleLogout}>
